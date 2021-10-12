@@ -36,12 +36,13 @@
         </button>
         <!-- Components -->
         <div class="flex items-center pl-2 ml-auto space-x-1 sm:space-x-2">
-            <languages></languages>
+            <!-- <languages></languages> -->
             <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
-            <search [appearance]="'bar'"></search>
-            <shortcuts></shortcuts>
+            <!-- <search [appearance]="'bar'"></search> -->
+            <button mat-icon-button (click)="toggleScheme()"><mat-icon>{{themeScheme === 'dark' ? 'light_mode' : 'dark_mode'}}</mat-icon></button>
+            <!-- <shortcuts></shortcuts> -->
             <messages></messages>
-            <notifications></notifications>
+            <!-- <notifications></notifications> -->
             <user></user>
         </div>
     </div>
@@ -55,7 +56,7 @@
 
     <!-- Footer -->
     <div class="relative flex flex-0 items-center justify-start w-full h-14 px-4 md:px-6 z-49 border-t bg-card dark:bg-transparent print:hidden">
-        <span class="font-medium text-secondary">Fuse &copy; {{currentYear}}</span>
+        <span class="font-medium text-secondary">MR &copy; {{currentYear}}</span>
     </div>
 
 </div>

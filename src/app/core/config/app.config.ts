@@ -24,7 +24,7 @@ export interface AppConfig
  * FuseConfigService and its methods.
  */
 export const appConfig: AppConfig = {
-    layout: 'classy',
-    scheme: 'light',
-    theme : 'default'
+    layout: 'classic',
+    scheme: 'dark',
+    theme : 'indigo'
 };

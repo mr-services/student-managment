@@ -6,6 +6,8 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { FuseNavigationService, FuseVerticalNavigationComponent } from '@fuse/components/navigation';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { NavigationService } from 'app/core/navigation/navigation.service';
+import { FuseConfigService } from '@fuse/services/config';
+import { AppConfig, Scheme } from 'app/core/config/app.config';
 
 @Component({
     selector     : 'classic-layout',
@@ -16,6 +18,7 @@ export class ClassicLayoutComponent implements OnInit, OnDestroy
 {
     isScreenSmall: boolean;
     navigation: Navigation;
+    themeScheme: string;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -26,7 +29,8 @@ export class ClassicLayoutComponent implements OnInit, OnDestroy
         private _router: Router,
         private _navigationService: NavigationService,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
-        private _fuseNavigationService: FuseNavigationService
+        private _fuseNavigationService: FuseNavigationService,
+        private _fuseConfigService: FuseConfigService,
     )
     {
     }
@@ -67,6 +71,11 @@ export class ClassicLayoutComponent implements OnInit, OnDestroy
                 // Check if the screen is small
                 this.isScreenSmall = !matchingAliases.includes('md');
             });
+
+        // Subscribe to theme scheme changes
+        this._fuseConfigService.config$.subscribe((config: AppConfig) => {
+            this.themeScheme = config.scheme;
+        });
     }
 
     /**
@@ -98,5 +107,20 @@ export class ClassicLayoutComponent implements OnInit, OnDestroy
             // Toggle the opened status
             navigation.toggle();
         }
+    }
+
+    /**
+     * Toggle light & dark theme.
+     */
+    toggleScheme(): void {
+        let scheme: Scheme;
+
+        if (this.themeScheme === 'light') {
+            scheme = 'dark';
+        } else {
+            scheme = 'light';
+        }
+
+        this._fuseConfigService.config = {scheme};
     }
 }
