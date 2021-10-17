@@ -3,6 +3,8 @@ import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, 
 import { Observable, of } from 'rxjs';
 import { AuthService } from 'app/core/auth/auth.service';
 import { switchMap } from 'rxjs/operators';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { User } from '@firebase/auth-types';
 
 @Injectable({
     providedIn: 'root'
@@ -10,13 +12,22 @@ import { switchMap } from 'rxjs/operators';
 export class NoAuthGuard implements CanActivate, CanActivateChild, CanLoad
 {
     /**
+     * User is authentication status
+     */
+    private _signedIn: boolean = false;
+
+    /**
      * Constructor
      */
     constructor(
         private _authService: AuthService,
-        private _router: Router
+        private _router: Router,
+        private _fireAuth: AngularFireAuth
     )
     {
+        this._fireAuth.authState.subscribe((user: User) => {
+            this._signedIn = !!user;
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -67,24 +78,31 @@ export class NoAuthGuard implements CanActivate, CanActivateChild, CanLoad
      */
     private _check(): Observable<boolean>
     {
+        if (!this._signedIn) {
+            return of(true);
+        } else {
+            this._router.navigate(['']);
+            return of(false);
+        }
+
         // Check the authentication status
-        return this._authService.check()
-                   .pipe(
-                       switchMap((authenticated) => {
+        // return this._authService.check()
+        //            .pipe(
+        //                switchMap((authenticated) => {
 
-                           // If the user is authenticated...
-                           if ( authenticated )
-                           {
-                               // Redirect to the root
-                               this._router.navigate(['']);
+        //                    // If the user is authenticated...
+        //                    if ( authenticated )
+        //                    {
+        //                        // Redirect to the root
+        //                        this._router.navigate(['']);
 
-                               // Prevent the access
-                               return of(false);
-                           }
+        //                        // Prevent the access
+        //                        return of(false);
+        //                    }
 
-                           // Allow the access
-                           return of(true);
-                       })
-                   );
+        //                    // Allow the access
+        //                    return of(true);
+        //                })
+        //            );
     }
 }

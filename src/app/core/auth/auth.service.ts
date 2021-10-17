@@ -4,20 +4,29 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { User } from '@firebase/auth-types';
 
-@Injectable()
+@Injectable({
+    providedIn:  'root'
+})
 export class AuthService
 {
     private _authenticated: boolean = false;
+    private _signedIn: boolean = false;
 
     /**
      * Constructor
      */
     constructor(
         private _httpClient: HttpClient,
-        private _userService: UserService
+        private _userService: UserService,
+        private _firebaseAuth: AngularFireAuth
     )
     {
+        this._firebaseAuth.authState.subscribe((user: User) => {
+            this._signedIn = user.uid ? true : false;
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -78,7 +87,7 @@ export class AuthService
             switchMap((response: any) => {
 
                 // Store the access token in the local storage
-                this.accessToken = response.accessToken;
+                // this.accessToken = response.accessToken;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;
@@ -90,6 +99,34 @@ export class AuthService
                 return of(response);
             })
         );
+    }
+
+    async signInUsingFirebase(credentials: { email: string; password: string }): Promise<void> {
+        return this._firebaseAuth.signInWithEmailAndPassword('admin@mrservices.in', 'MohitRaju@2020').then((response) => {
+            response.user.getIdToken().then((token) => {
+                // Store the access token in the local storage
+                this.accessToken = token;
+
+                // Set the authenticated flag to true
+                this._authenticated = true;
+
+                // Store the user on the user service
+                this._userService.user = {
+                    id: response.user.uid,
+                    name: response.user.displayName,
+                    email: response.user.email,
+                    avatar: response.user.photoURL,
+                    status: 'online'
+                };
+                // this._userService.update({
+                //     id: response.user.uid,
+                //     name: response.user.displayName,
+                //     email: response.user.email,
+                //     avatar: response.user.photoURL,
+                //     status: 'online'
+                // });
+            });
+        });
     }
 
     /**
@@ -134,6 +171,9 @@ export class AuthService
         // Set the authenticated flag to false
         this._authenticated = false;
 
+        // Firebase SignOut
+        this._firebaseAuth.signOut();
+
         // Return the observable
         return of(true);
     }
@@ -163,6 +203,13 @@ export class AuthService
      */
     check(): Observable<boolean>
     {
+        if (this._signedIn) {
+            return of(true);
+        } else {
+            // this._router.navigate(['sign-in'], {queryParams: {redirectURL}});
+            return of(false);
+        }
+
         // Check if the user is logged in
         if ( this._authenticated )
         {
@@ -176,12 +223,13 @@ export class AuthService
         }
 
         // Check the access token expire date
-        if ( AuthUtils.isTokenExpired(this.accessToken) )
-        {
-            return of(false);
-        }
+        // if ( AuthUtils.isTokenExpired(this.accessToken) )
+        // {
+        //     return of(false);
+        // }
 
         // If the access token exists and it didn't expire, sign in using it
-        return this.signInUsingToken();
+        // return this.signInUsingToken();
+        return of(true);
     }
 }

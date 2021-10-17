@@ -3,6 +3,10 @@ import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { InitialDataResolver } from 'app/app.resolvers';
+import { AngularFireAuthGuard, hasCustomClaim, redirectUnauthorizedTo, redirectLoggedInTo } from '@angular/fire/compat/auth-guard';
+
+const redirectUnauthorizedToLogin = (): any => redirectUnauthorizedTo(['/sign-in']);
+const redirectLoggedInToItems = (): any => redirectLoggedInTo(['/dashboards/project']);
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -22,10 +26,11 @@ export const appRoutes: Route[] = [
     // Auth routes for guests
     {
         path: '',
-        canActivate: [NoAuthGuard],
-        canActivateChild: [NoAuthGuard],
+        canActivate: [AngularFireAuthGuard],
+        // canActivateChild: [NoAuthGuard],
         component: LayoutComponent,
         data: {
+            authGuardPipe: redirectLoggedInToItems,
             layout: 'empty'
         },
         children: [
@@ -67,8 +72,9 @@ export const appRoutes: Route[] = [
     // Admin routes
     {
         path       : '',
-        canActivate: [AuthGuard],
-        canActivateChild: [AuthGuard],
+        canActivate: [AngularFireAuthGuard],
+        // canActivateChild: [AngularFireAuthGuard],
+        data: { layout: 'classic', authGuardPipe: redirectUnauthorizedToLogin },
         component  : LayoutComponent,
         resolve    : {
             initialData: InitialDataResolver,
@@ -79,7 +85,9 @@ export const appRoutes: Route[] = [
             {path: 'dashboards', children: [
                 {path: 'project', loadChildren: () => import('app/modules/admin/dashboards/project/project.module').then(m => m.ProjectModule)},
                 {path: 'analytics', loadChildren: () => import('app/modules/admin/dashboards/analytics/analytics.module').then(m => m.AnalyticsModule)},
-            ]},
+            ],
+            canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin }
+        },
 
             // Apps
             {path: 'apps', children: [
@@ -203,6 +211,6 @@ export const appRoutes: Route[] = [
             // 404 & Catch all
             {path: '404-not-found', pathMatch: 'full', loadChildren: () => import('app/modules/admin/pages/error/error-404/error-404.module').then(m => m.Error404Module)},
             {path: '**', redirectTo: '404-not-found'}
-        ]
+        ],
     }
 ];

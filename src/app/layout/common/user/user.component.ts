@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { User } from 'app/core/user/user.types';
 import { UserService } from 'app/core/user/user.service';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
     selector       : 'user',
@@ -30,7 +31,8 @@ export class UserComponent implements OnInit, OnDestroy
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
-        private _userService: UserService
+        private _userService: UserService,
+        public afA: AngularFireAuth
     )
     {
     }
@@ -44,15 +46,26 @@ export class UserComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        // Subscribe to user changes
-        this._userService.user$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) => {
-                this.user = user;
+        this.afA.user.subscribe((user) => {
+            this.user = {
+                email: user.email,
+                id: user.uid,
+                name: user.displayName,
+                avatar: user.photoURL,
+                status: 'online'
+            };
+            this._userService.user = this.user;
+        });
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        // Subscribe to user changes
+        // this._userService.user$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((user: User) => {
+        //         this.user = user;
+
+        //         // Mark for check
+        //         this._changeDetectorRef.markForCheck();
+        //     });
     }
 
     /**
@@ -94,6 +107,8 @@ export class UserComponent implements OnInit, OnDestroy
      */
     signOut(): void
     {
-        this._router.navigate(['/sign-out']);
+        this.afA.signOut().then(() => {
+            this._router.navigate(['/sign-out']);
+        });
     }
 }

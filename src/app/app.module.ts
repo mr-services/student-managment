@@ -15,6 +15,12 @@ import { appRoutes } from 'app/app.routing';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
+// Firebase Modules
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireAuthGuardModule } from '@angular/fire/compat/auth-guard';
+
 const routerConfig: ExtraOptions = {
     preloadingStrategy       : PreloadAllModules,
     scrollPositionRestoration: 'enabled'
@@ -40,14 +46,21 @@ const routerConfig: ExtraOptions = {
         // Layout module of your application
         LayoutModule,
 
+        // Firebase Configuration
+        // AngularFireModule(() => initializeApp(environment.firebaseConfig)),
+        AngularFireModule.initializeApp(environment.firebaseConfig),
+        AngularFireAnalyticsModule,
+        AngularFirestoreModule,
+        AngularFireAuthGuardModule,
+
         // 3rd party modules that require global configuration via forRoot
         MarkdownModule.forRoot({}),
-          ServiceWorkerModule.register('ngsw-worker.js', {
+        ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: environment.production,
             // Register the ServiceWorker as soon as the app is stable
             // or after 30 seconds (whichever comes first).
             registrationStrategy: 'registerWhenStable:30000'
-          })
+        })
     ],
     bootstrap   : [
         AppComponent

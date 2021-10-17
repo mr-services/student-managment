@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApexOptions } from 'ng-apexcharts';
 import { ProjectService } from 'app/modules/admin/dashboards/project/project.service';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 
 @Component({
     selector       : 'project',
@@ -22,13 +23,15 @@ export class ProjectComponent implements OnInit, OnDestroy
     data: any;
     selectedProject: string = 'ACME Corp. Backend App';
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    private usersCollection: AngularFirestoreCollection<any>;
 
     /**
      * Constructor
      */
     constructor(
         private _projectService: ProjectService,
-        private _router: Router
+        private _router: Router,
+        private afs: AngularFirestore
     )
     {
     }
@@ -67,6 +70,11 @@ export class ProjectComponent implements OnInit, OnDestroy
                 }
             }
         };
+
+        this.usersCollection = this.afs.collection<any>('users');
+        this.usersCollection.valueChanges().subscribe((data) => {
+            console.log('users', data);
+        });
     }
 
     /**
