@@ -102,7 +102,7 @@ export class AuthService
     }
 
     async signInUsingFirebase(credentials: { email: string; password: string }): Promise<void> {
-        return this._firebaseAuth.signInWithEmailAndPassword('admin@mrservices.in', 'MohitRaju@2020').then((response) => {
+        return this._firebaseAuth.signInWithEmailAndPassword('andemohit@gmail.com', '123123').then((response) => {
             response.user.getIdToken().then((token) => {
                 // Store the access token in the local storage
                 this.accessToken = token;

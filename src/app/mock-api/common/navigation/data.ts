@@ -33,6 +33,27 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon    : 'heroicons_outline:home',
         children: [
             {
+                id   : 'apps.branches',
+                title: 'Branches',
+                type : 'collapsable',
+                icon : 'heroicons_outline:library',
+                // link : '/apps/branches'
+                children: [
+                    {
+                        id   : 'apps.branches.list',
+                        title: 'All Branches',
+                        type : 'basic',
+                        link : '/apps/branches'
+                    },
+                    {
+                        id   : 'apps.branches.add',
+                        title: 'Add Branch',
+                        type : 'basic',
+                        link : '/apps/branches/add'
+                    }
+                ]
+            },
+            {
                 id   : 'apps.academy',
                 title: 'Academy',
                 type : 'basic',

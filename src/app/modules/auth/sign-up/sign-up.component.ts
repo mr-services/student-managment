@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
@@ -22,13 +24,16 @@ export class AuthSignUpComponent implements OnInit
     signUpForm: FormGroup;
     showAlert: boolean = false;
 
+
     /**
      * Constructor
      */
     constructor(
         private _authService: AuthService,
         private _formBuilder: FormBuilder,
-        private _router: Router
+        private _router: Router,
+        private _afA: AngularFireAuth,
+        private _afS: AngularFirestore
     )
     {
     }
@@ -60,7 +65,7 @@ export class AuthSignUpComponent implements OnInit
     /**
      * Sign up
      */
-    signUp(): void
+    async signUp(): Promise<void>
     {
         // Do nothing if the form is invalid
         if ( this.signUpForm.invalid )
@@ -75,30 +80,83 @@ export class AuthSignUpComponent implements OnInit
         this.showAlert = false;
 
         // Sign up
-        this._authService.signUp(this.signUpForm.value)
-            .subscribe(
-                (response) => {
+        // this._authService.signUp(this.signUpForm.value)
+        //     .subscribe(
+        //         (response) => {
 
-                    // Navigate to the confirmation required page
-                    this._router.navigateByUrl('/confirmation-required');
-                },
-                (response) => {
+        //             // Navigate to the confirmation required page
+        //             this._router.navigateByUrl('/confirmation-required');
+        //         },
+        //         (response) => {
 
-                    // Re-enable the form
-                    this.signUpForm.enable();
+        //             // Re-enable the form
+        //             this.signUpForm.enable();
 
-                    // Reset the form
-                    this.signUpNgForm.resetForm();
+        //             // Reset the form
+        //             this.signUpNgForm.resetForm();
 
-                    // Set the alert
-                    this.alert = {
-                        type   : 'error',
-                        message: 'Something went wrong, please try again.'
-                    };
+        //             // Set the alert
+        //             this.alert = {
+        //                 type   : 'error',
+        //                 message: 'Something went wrong, please try again.'
+        //             };
 
-                    // Show the alert
-                    this.showAlert = true;
-                }
-            );
+        //             // Show the alert
+        //             this.showAlert = true;
+        //         }
+        //     );
+
+        try {
+            const newUser = await this._afA.createUserWithEmailAndPassword(this.signUpForm.value.email, this.signUpForm.value.password);
+
+            // this._afS.collection('institutes').doc(this.signUpForm.value.company).valueChanges().subscribe((data) => {
+            //     console.log(data);
+            // });
+
+            this._afS.collection('institutes').doc(this.signUpForm.value.company).set({
+                name: this.signUpForm.value.company
+            });
+
+            this._afS.collection('users').doc(newUser.user.uid).set({
+                fName: this.signUpForm.value.name,
+                lName: this.signUpForm.value.name,
+                email: this.signUpForm.value.email,
+                instituteId: this.signUpForm.value.company
+            });
+
+            // if institute id is unique
+            // if (true) {
+            //     await this._afS
+            //         .collection('institutes')
+            //         .doc(this.signUpForm.value.company)
+            //         .collection('users')
+            //         .doc(newUser.user.uid)
+            //         .set({
+            //             userID: newUser.user.uid,
+            //             name: this.signUpForm.value.name,
+            //             email: this.signUpForm.value.email,
+            //             role: 'admin',
+            //             subscriptionType: 'annual',
+            //             instituteID: this.signUpForm.value.company,
+            //         });
+
+            await this._router.navigateByUrl('/confirmation-required');
+
+        } catch (error) {
+            // Re-enable the form
+            this.signUpForm.enable();
+
+            // Reset the form
+            this.signUpNgForm.resetForm();
+
+            // Set the alert
+            this.alert = {
+                type   : 'error',
+                message: 'Something went wrong, please try again.'
+            };
+
+            // Show the alert
+            this.showAlert = true;
+        }
     }
 }

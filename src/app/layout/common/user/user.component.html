@@ -5,7 +5,7 @@
     <span class="relative">
         <img
             class="w-7 h-7 rounded-full"
-            *ngIf="showAvatar && user.avatar"
+            *ngIf="showAvatar && user && user.avatar"
             [src]="user.avatar">
         <mat-icon
             *ngIf="!showAvatar || !user.avatar"

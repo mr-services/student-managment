@@ -91,6 +91,7 @@ export const appRoutes: Route[] = [
 
             // Apps
             {path: 'apps', children: [
+                {path: 'branches', loadChildren: () => import('app/modules/admin/apps/branches/branches.module').then(m => m.BranchesModule)},
                 {path: 'academy', loadChildren: () => import('app/modules/admin/apps/academy/academy.module').then(m => m.AcademyModule)},
                 {path: 'calendar', loadChildren: () => import('app/modules/admin/apps/calendar/calendar.module').then(m => m.CalendarModule)},
                 {path: 'chat', loadChildren: () => import('app/modules/admin/apps/chat/chat.module').then(m => m.ChatModule)},

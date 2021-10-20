@@ -32,7 +32,7 @@ export class UserComponent implements OnInit, OnDestroy
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _userService: UserService,
-        public afA: AngularFireAuth
+        private _afA: AngularFireAuth
     )
     {
     }
@@ -46,7 +46,7 @@ export class UserComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        this.afA.user.subscribe((user) => {
+        this._afA.user.subscribe((user) => {
             this.user = {
                 email: user.email,
                 id: user.uid,
@@ -107,7 +107,7 @@ export class UserComponent implements OnInit, OnDestroy
      */
     signOut(): void
     {
-        this.afA.signOut().then(() => {
+        this._afA.signOut().then(() => {
             this._router.navigate(['/sign-out']);
         });
     }
