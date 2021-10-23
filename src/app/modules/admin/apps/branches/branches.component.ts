@@ -1,8 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+// Angular Core
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { ActivatedRoute, Router } from '@angular/router';
+
+// Fuse Core
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+
+// RXJS
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
+// Services
 import { BranchesService } from './branches.service';
 
 @Component({
@@ -19,17 +29,20 @@ import { BranchesService } from './branches.service';
             }
 
             @screen md {
-                grid-template-columns: 48px 112px 112px 112px auto 96px;
+                grid-template-columns: 48px 112px 112px 112px auto 112px 112px 96px;
             }
 
             @screen lg {
-                grid-template-columns: 48px 112px 112px 112px auto 96px;
+                grid-template-columns: 48px 112px 112px 112px auto 112px 112px 96px;
             }
         }
     `
   ],
 })
 export class BranchesComponent implements OnInit {
+
+  @ViewChild(MatPaginator) private _paginator: MatPaginator;
+  @ViewChild(MatSort) private _sort: MatSort;
 
   public data: any;
   public isLoading: boolean = true;
@@ -39,24 +52,16 @@ export class BranchesComponent implements OnInit {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   constructor(
+    private _fuseConfirmationService: FuseConfirmationService,
     private _branchesService: BranchesService,
     private _formBuilder: FormBuilder,
     private _router: Router,
+    private _activeRoute: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
-    // Get the data
-    this._branchesService.data$
-    .pipe(takeUntil(this._unsubscribeAll))
-    .subscribe((data) => {
 
-        // Store the data
-        this.data = data;
-    });
-
-    this._branchesService.getData().subscribe();
-
-    this._branchesService.branches.subscribe(
+    this._branchesService.brancheList().subscribe(
         // Success
         (branches) => {
             this.branches$ = branches;
@@ -66,17 +71,33 @@ export class BranchesComponent implements OnInit {
         },
 
         // Error
-        (err) => {
+        (err) => {},
+
+        // Finally
+        () => {
           // Stop loading
           this.isLoading = false;
-        },
+        }
     );
   }
 
   addBranch(): void { }
 
-  editBranch(branch): void {
-    this._router.navigate([`/apps/branches/edit/:${branch.title}`]);
+  editBranch(branch: any): void {
+    this._router.navigate([`/apps/branches/edit/:${branch.id}`], { relativeTo: this._activeRoute, queryParams: branch });
+  }
+
+  deleteBranch(branch): void {
+    const dialogRef = this._fuseConfirmationService.open();
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result === 'confirmed') {
+        this.isLoading = true;
+        await this._branchesService.deleteBranch(branch.id)
+          .then(() => console.log('branch deleted ✅'))
+          .catch(() => console.log('failed to delete branch ❌'))
+          .finally(() => this.isLoading = false);
+      }
+    });
   }
 
 }

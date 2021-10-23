@@ -54,6 +54,27 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 ]
             },
             {
+                id   : 'apps.students',
+                title: 'Students',
+                type : 'collapsable',
+                icon : 'heroicons_solid:user-group',
+                // link : '/apps/branches'
+                children: [
+                    {
+                        id   : 'apps.students.list',
+                        title: 'Students List',
+                        type : 'basic',
+                        link : '/apps/students'
+                    },
+                    {
+                        id   : 'apps.students.add',
+                        title: 'Add Students',
+                        type : 'basic',
+                        link : '/apps/students/add'
+                    }
+                ]
+            },
+            {
                 id   : 'apps.academy',
                 title: 'Academy',
                 type : 'basic',

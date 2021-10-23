@@ -13,7 +13,6 @@ import { User } from '@firebase/auth-types';
     providedIn: 'root',
 })
 export class BranchesService {
-    private _data: BehaviorSubject<any> = new BehaviorSubject(null);
     // private branchCollections: AngularFirestoreCollection<any>;
     private branchCollections: Subject<any> = new Subject<any>();
     private instituteId: string;
@@ -29,15 +28,6 @@ export class BranchesService {
     ) {
         this.userService.currentUserInfo.subscribe((userInfo) => {
             this.instituteId = userInfo.instituteId;
-
-            this._afS
-                .collection('branches', ref =>
-                    ref.where('instituteId', '==', this.instituteId)
-                )
-                .valueChanges()
-                .subscribe((response: any) => {
-                    this.branches = response;
-                });
         });
     }
 
@@ -45,41 +35,9 @@ export class BranchesService {
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
 
-    /**
-     * Getter for data
-     */
-    get data$(): Observable<any> {
-        return this._data.asObservable();
-    }
-
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Get data
-     */
-    getData(): Observable<any> {
-        // this.userService
-        //     .getUser()
-        //     .subscribe((userData: User) => {
-        //         this._userInfo = userData;
-        //     })
-        //     .add(() => {
-        //         this._afS
-        //             .collection('users')
-        //             .doc(this._userInfo.uid)
-        //             .valueChanges()
-        //             .subscribe((users) => {
-        //                 console.log('users--- ', users);
-        //             });
-        //     });
-        return this._httpClient.get('api/dashboards/analytics').pipe(
-            tap((response: any) => {
-                this._data.next(response);
-            })
-        );
-    }
 
     set branches(value) {
         this.branches$.next(value);
@@ -88,8 +46,31 @@ export class BranchesService {
         return this.branches$.asObservable();
     }
 
-    addBranch(addBranch: any): void {
+    brancheList(): Observable<any> {
+        return this._afS
+        .collection('branches', ref =>
+            ref.where('instituteId', '==', this.instituteId)
+        )
+        .snapshotChanges()
+        .pipe(
+            map(actions => actions.map((a: any) => ({
+                 ...a.payload.doc.data(),
+                 ...a.payload.doc.data()?.createdOn?.toDate() || null, ...a.payload.doc.data()?.updatedOn?.toDate() || null,
+                 id: a.payload.doc.id
+                })))
+        );
+    }
+
+    async addBranch(addBranch: any): Promise<void> {
         addBranch.instituteId = this.instituteId;
-        this._afS.collection('branches').add(addBranch);
+        await this._afS.collection('branches').add(addBranch);
+    }
+
+    async updateBranch(branch: any): Promise<void> {
+        await this._afS.collection('branches').doc(branch.id).update(branch);
+    }
+
+    async deleteBranch(branchID: string): Promise<void> {
+        return await this._afS.doc(`branches/${branchID}`).delete().then(response => response).catch(error => error);
     }
 }

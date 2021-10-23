@@ -42,7 +42,6 @@
         <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
             <ng-container *ngIf="branches$">
                 <ng-container *ngIf="branches$.length > 0; else noBranches">
-                    {{branches$.length}}
                     <div class="grid">
                         <!-- Header -->
                         <div
@@ -65,6 +64,16 @@
                                 class="hidden lg:block"
                                 [mat-sort-header]="'address'">
                                 Address
+                            </div>
+                            <div
+                                class="hidden lg:block"
+                                [mat-sort-header]="'createdOn'">
+                                Created Date
+                            </div>
+                            <div
+                                class="hidden lg:block"
+                                [mat-sort-header]="'updatedOn'">
+                                Last Updated Date
                             </div>
                             <div class="hidden lg:block">
                                 Active
@@ -98,19 +107,39 @@
                                         {{branch.address}}
                                     </div>
 
+                                    <!-- Created Date -->
+                                    <div class="hidden md:block truncate">
+                                        {{branch?.createdOn?.toDate() | date:'dd/MM/yyyy' || 'N/A'}}
+                                    </div>
+
+                                    <!-- Last Updated Date -->
+                                    <div class="hidden md:block truncate">
+                                        {{branch?.updatedOn?.toDate() | date:'dd/MM/yyyy' || 'N/A'}}
+                                    </div>
+
                                     <!-- Activity -->
                                     <div class="hidden md:block truncate">
+                                        <!-- Edit -->
                                         <button mat-icon-button (click)="editBranch(branch)">
                                             <mat-icon svgIcon="heroicons_outline:pencil"></mat-icon>
                                         </button>
-                                        <!-- <a routerLink="/apps/branches/edit/:{{branch.title}}" [queryParams]="branch" skipLocationChange=true >
-                                            <mat-icon svgIcon="heroicons_outline:pencil"></mat-icon>
-                                        </a> -->
+                                        
+                                        <!-- Delete -->
+                                        <button mat-icon-button (click)="deleteBranch(branch)">
+                                            <mat-icon svgIcon="heroicons_outline:trash"></mat-icon>
+                                        </button>
+
                                     </div>
                                 </div>
                             </ng-container>
                         </ng-container>
                     </div>
+
+                    <mat-paginator
+                        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [ngClass]="{'pointer-events-none': isLoading}"
+                        [pageSizeOptions]="[5, 10, 25, 100]"
+                        [showFirstLastButtons]="true"></mat-paginator>
                 </ng-container>
             </ng-container>
 
