@@ -27,6 +27,7 @@ export class BranchesResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        return of(null);
+        // return this._branchesService.brancheList().pipe(res => res);
+        return of([]);
     }
 }

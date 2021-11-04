@@ -12,7 +12,13 @@
         <!-- Actions -->
         <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
             <!-- Search -->
-            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50">
+            <!-- <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50">
+                <mat-select
+                    [value]="'EU'"
+                    matPrefix>
+                    <mat-option [value]="'EU'">EU</mat-option>
+                    <mat-option [value]="'US'">US</mat-option>
+                </mat-select>
                 <mat-icon
                     matPrefix
                     [svgIcon]="'heroicons_outline:search'"></mat-icon>
@@ -21,14 +27,26 @@
                     [formControl]="searchInputControl"
                     [autocomplete]="'off'"
                     [placeholder]="'Search products'">
+            </mat-form-field> -->
+            <mat-form-field
+                class="fuse-mat-dense fuse-mat-no-subscript min-w-50">
+                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'" [placeholder]="'Search'">
+                <mat-select
+                    value="title"
+                    [formControl]="searchTypeControl"
+                    matPrefix>
+                    <mat-option value="title">Title</mat-option>
+                    <mat-option [value]="'manager'">Manager</mat-option>
+                    <mat-option [value]="'phone'">Phone</mat-option>
+                    <mat-option [value]="'address'">Address</mat-option>
+                </mat-select>
             </mat-form-field>
             <!-- Add product button -->
             <a
                 routerLink="/apps/branches/add"
                 class="ml-4"
                 mat-flat-button
-                [color]="'primary'"
-                (click)="addBranch()">
+                [color]="'primary'">
                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                 <span class="ml-2 mr-1">Add</span>
             </a>
@@ -41,7 +59,7 @@
         <!-- Branches list -->
         <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
             <ng-container *ngIf="branches$">
-                <ng-container *ngIf="branches$.length > 0; else noBranches">
+                <ng-container>
                     <div class="grid">
                         <!-- Header -->
                         <div
@@ -138,8 +156,8 @@
                     <mat-paginator
                         class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
                         [ngClass]="{'pointer-events-none': isLoading}"
-                        [pageSizeOptions]="[5, 10, 25, 100]"
-                        [showFirstLastButtons]="true"></mat-paginator>
+                        [length]="branchCount"
+                        [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
                 </ng-container>
             </ng-container>
 

@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { BranchesComponent } from './branches.component';
 import { RouterModule } from '@angular/router';
 import { branchesRoutes } from './branches.routing';
@@ -19,6 +18,8 @@ import { AddEditBranchesComponent } from './add-edit-branches/add-edit-branches.
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 
 
@@ -43,7 +44,9 @@ import { MatDividerModule } from '@angular/material/divider';
     MatTabsModule,
     MatRadioModule,
     MatCheckboxModule,
-    MatDividerModule
+    MatDividerModule,
+    MatPaginatorModule,
+    MatSortModule
   ]
 })
 export class BranchesModule { }

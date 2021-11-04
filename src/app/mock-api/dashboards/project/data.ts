@@ -52,18 +52,18 @@ export const project = {
     taskDistribution  : {
         overview: {
             'this-week': {
-                'new'      : 594,
-                'completed': 287
+                'new'      : 1500,
+                'completed': 1200
             },
             'last-week': {
-                'new'      : 526,
-                'completed': 260
+                'new'      : 1200,
+                'completed': 1000
             }
         },
-        labels  : ['API', 'Backend', 'Frontend', 'Issues'],
+        labels  : ['Boys', 'Grils'],
         series  : {
-            'this-week': [15, 20, 38, 27],
-            'last-week': [19, 16, 42, 23]
+            'this-week': [1500, 1200],
+            'last-week': [800, 1000]
         }
     },
     schedule          : {
@@ -78,7 +78,7 @@ export const project = {
                 time : '10:30 AM'
             },
             {
-                title: 'Public Beta Release',
+                title: 'Meeting with Rao',
                 time : '11:00 AM'
             },
             {
@@ -86,19 +86,19 @@ export const project = {
                 time : '12:10 PM'
             },
             {
-                title   : 'Dinner with David',
+                title   : 'Dinner with Raj',
                 time    : '05:30 PM',
-                location: 'Magnolia'
+                location: 'Vizag'
             },
             {
-                title   : 'Jane\'s Birthday Party',
+                title   : 'Srinivas\'s Birthday Party',
                 time    : '07:30 PM',
                 location: 'Home'
             },
             {
-                title   : 'Overseer\'s Retirement Party',
+                title   : 'Chairman Retirement Party',
                 time    : '09:30 PM',
-                location: 'Overseer\'s room'
+                location: 'Conference room 2A'
             }
         ],
         tomorrow: [
@@ -116,18 +116,18 @@ export const project = {
                 time : '12:10 PM'
             },
             {
-                title   : 'Meeting with Beta Testers',
+                title   : 'Meeting with Staff',
                 time    : '03:00 PM',
                 location: 'Conference room 2C'
             },
             {
-                title: 'Live Stream',
+                title: 'Announcment to students',
                 time : '05:30 PM'
             },
             {
-                title   : 'Release Party',
+                title   : 'Party',
                 time    : '07:30 PM',
-                location: 'CEO\'s house'
+                location: 'Vizag'
             },
             {
                 title   : 'CEO\'s Private Party',

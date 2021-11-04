@@ -36,15 +36,15 @@ export class UserService {
             this.currentUser = user;
         });
 
-        this.currentUser$.subscribe((userInfo) => {
-            this._afs
-                .collection('users')
-                .doc(userInfo.uid)
-                .valueChanges()
-                .subscribe((userInf) => {
-                    this.currentUserInfo = userInf;
-                });
-        });
+        // this.currentUser$.subscribe((userInfo) => {
+        //     this._afs
+        //         .collection('users')
+        //         .doc(userInfo.uid)
+        //         .valueChanges()
+        //         .subscribe((userInf) => {
+        //             this.currentUserInfo = userInf;
+        //         });
+        // });
     }
 
     // -----------------------------------------------------------------------------------------------------

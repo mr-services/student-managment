@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { User } from 'app/core/user/user.types';
 import { UserService } from 'app/core/user/user.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
     selector       : 'user',
@@ -32,7 +33,8 @@ export class UserComponent implements OnInit, OnDestroy
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _userService: UserService,
-        private _afA: AngularFireAuth
+        private _afA: AngularFireAuth,
+        private _authService: AuthService,
     )
     {
     }
@@ -51,8 +53,9 @@ export class UserComponent implements OnInit, OnDestroy
                 email: user.email,
                 id: user.uid,
                 name: user.displayName,
-                avatar: user.photoURL,
-                status: 'online'
+                avatar: user?.photoURL || 'https://www.pngfind.com/pngs/m/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.png',
+                status: 'online',
+                instituteId: this._authService.instituteId
             };
             this._userService.user = this.user;
         });
@@ -108,6 +111,7 @@ export class UserComponent implements OnInit, OnDestroy
     signOut(): void
     {
         this._afA.signOut().then(() => {
+            localStorage.removeItem('instituteId');
             this._router.navigate(['/sign-out']);
         });
     }

@@ -221,7 +221,7 @@ export class ProjectComponent implements OnInit, OnDestroy
                 fontFamily: 'inherit',
                 foreColor : 'inherit',
                 height    : '100%',
-                type      : 'polarArea',
+                type      : 'pie',
                 toolbar   : {
                     show: false
                 },

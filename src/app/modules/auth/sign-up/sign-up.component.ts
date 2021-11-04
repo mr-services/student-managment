@@ -107,22 +107,33 @@ export class AuthSignUpComponent implements OnInit
         //     );
 
         try {
-            const newUser = await this._afA.createUserWithEmailAndPassword(this.signUpForm.value.email, this.signUpForm.value.password);
+            await this._afA.createUserWithEmailAndPassword(this.signUpForm.value.email, this.signUpForm.value.password)
+                .then((userInfo) => {
+                    this._afS.collection('institutes').doc(this.signUpForm.value.company).set({
+                        name: this.signUpForm.value.company,
+                    })
+                        .then(() => {
+                            this._afS.collection(`institutes/${this.signUpForm.value.company}/users`).doc(userInfo.user.uid).set({
+                                fName: this.signUpForm.value.name,
+                                lName: this.signUpForm.value.name,
+                                instituteId: this.signUpForm.value.company,
+                                email: this.signUpForm.value.email,
+                                password: this.signUpForm.value.password
+                            });
+                        });
+                });
 
             // this._afS.collection('institutes').doc(this.signUpForm.value.company).valueChanges().subscribe((data) => {
             //     console.log(data);
             // });
 
-            this._afS.collection('institutes').doc(this.signUpForm.value.company).set({
-                name: this.signUpForm.value.company
-            });
 
-            this._afS.collection('users').doc(newUser.user.uid).set({
-                fName: this.signUpForm.value.name,
-                lName: this.signUpForm.value.name,
-                email: this.signUpForm.value.email,
-                instituteId: this.signUpForm.value.company
-            });
+            // this._afS.collection('users').doc(newUser.user.uid).set({
+            //     fName: this.signUpForm.value.name,
+            //     lName: this.signUpForm.value.name,
+            //     email: this.signUpForm.value.email,
+            //     instituteId: this.signUpForm.value.company
+            // });
 
             // if institute id is unique
             // if (true) {

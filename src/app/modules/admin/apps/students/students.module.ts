@@ -25,11 +25,15 @@ import { SharedModule } from 'app/shared/shared.module';
 // Routing
 import { studentRoutes } from './students.routing';
 import { StudentListComponent } from './list/student-list.component';
+import { AddEditComponent } from './add-edit/add-edit.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
     StudentsComponent,
-    StudentListComponent
+    StudentListComponent,
+    AddEditComponent
   ],
   imports: [
     CommonModule,
@@ -47,7 +51,9 @@ import { StudentListComponent } from './list/student-list.component';
     MatSelectModule,
     MatSlideToggleModule,
     MatTooltipModule,
-    SharedModule
+    SharedModule,
+    ReactiveFormsModule,
+    MatDividerModule
   ]
 })
 export class StudentsModule { }
